@@ -1,0 +1,13 @@
+{
+    "name": "aleksander.hitrov/monethagateway",
+    "authors": [
+        {
+            "name": "Alexander Hitrov",
+            "email": "aleksander.hitrov@betgames.tv"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {"Monetha\\": "Monetha/"}
+    }
+}
