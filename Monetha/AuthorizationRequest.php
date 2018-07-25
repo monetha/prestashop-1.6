@@ -36,9 +36,9 @@ class AuthorizationRequest
      * @throws \Exception
      */
     private function callApi($uri, $method = 'GET', array $body = null) {
-        $mthApi = "https://api.monetha.io/";
+        $mthApi = "https://api.monetha.io/mth-gateway/";
         if ($this->testMode) {
-            $mthApi = "https://api-sandbox.monetha.io/";
+            $mthApi = "https://api-sandbox.monetha.io/mth-gateway/";
         }
 
         $chSign = curl_init();

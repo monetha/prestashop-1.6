@@ -2,7 +2,7 @@
 
 Monetha payment gateway integration with Prestashop 1.5 - 1.6
 
-Detailed install and configuration guide will be available on our website - http://www.monetha.io/en/mvp/
+Detailed install and configuration guide is available at https://help.monetha.io/hc/en-us/articles/360002550272-PrestaShop-1-6-integration
 
 Contact email for your questions: team@monetha.io
 
