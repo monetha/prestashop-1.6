@@ -2,23 +2,28 @@
 
 namespace Monetha;
 
+require_once(__DIR__ . './../Services/GatewayService.php');
 
-class Config {
+use Monetha\Services\GatewayService;
+
+class Config
+{
     const PARAM_ENABLED = 'enabled';
     const PARAM_TEST_MODE = 'testMode';
-    const PARAM_MERCHANT_KEY = 'merchantKey';
     const PARAM_MERCHANT_SECRET = 'merchantSecret';
-
-    private static $configuration = [
-        self::PARAM_ENABLED => '1',
-        self::PARAM_TEST_MODE => '1',
-        self::PARAM_MERCHANT_KEY => 'MONETHA_SANDBOX_KEY',
-        self::PARAM_MERCHANT_SECRET => 'MONETHA_SANDBOX_SECRET',
-    ];
+    const PARAM_MONETHA_API_KEY = 'monethaApiKey';
 
     const ORDER_STATUS = 'PS_OS_MONETHA';
 
-    public static function get_predefined_configuration() {
+    private static $configuration = [
+        self::PARAM_ENABLED => '0',
+        self::PARAM_TEST_MODE => '1',
+        self::PARAM_MERCHANT_SECRET => 'MONETHA_SANDBOX_KEY',
+        self::PARAM_MONETHA_API_KEY => 'MONETHA_API_KEY',
+    ];
+
+    public static function get_predefined_configuration()
+    {
         return self::$configuration;
     }
 
@@ -26,7 +31,8 @@ class Config {
      * @return mixed
      * @throws \Exception
      */
-    public static function get_configuration() {
+    public static function get_configuration()
+    {
         $confJson = \Configuration::get('monethagateway');
         $conf = json_decode($confJson, true);
 
@@ -34,34 +40,36 @@ class Config {
 
         return $conf;
     }
-    
+
     private static $labels = [
         self::PARAM_ENABLED => 'Enabled',
         self::PARAM_TEST_MODE => 'Test Mode',
-        self::PARAM_MERCHANT_KEY => 'Monetha Key',
-        self::PARAM_MERCHANT_SECRET => 'Monetha Secret',
+        self::PARAM_MERCHANT_SECRET => 'Merchant secret',
+        self::PARAM_MONETHA_API_KEY => 'Monetha Api Key',
     ];
 
-    public static function get_labels() {
+    public static function get_labels()
+    {
         return self::$labels;
     }
-    
+
     /**
      * @param $form_values
      *
      * @throws \Exception
      */
-    public static function validate($form_values) {
+    public static function validate($form_values)
+    {
         $enabled = $form_values[self::PARAM_ENABLED];
-        $test_mode = $form_values[self::PARAM_TEST_MODE];
-        $merchant_key = $form_values[self::PARAM_MERCHANT_KEY];
-        $merchant_secret = $form_values[self::PARAM_MERCHANT_SECRET];
+        $testMode = $form_values[self::PARAM_TEST_MODE];
+        $merchantSecret = $form_values[self::PARAM_MERCHANT_SECRET];
+        $monethaApiKey = $form_values[self::PARAM_MONETHA_API_KEY];
 
         if (
             $enabled === false ||
-            $test_mode === false ||
-            $merchant_key === false ||
-            $merchant_secret === false
+            $testMode === false ||
+            $merchantSecret === false ||
+            $monethaApiKey === false
         ) {
             throw new \Exception(implode(', ', self::$labels) . ' required.');
         }
@@ -70,16 +78,22 @@ class Config {
             throw new \Exception('Invalid ' . self::$labels[self::PARAM_ENABLED] . ' parameter');
         }
 
-        if ($test_mode !== '1' && $test_mode !== '0') {
+        if ($testMode !== '1' && $testMode !== '0') {
             throw new \Exception('Invalid ' . self::$labels[self::PARAM_TEST_MODE] . ' parameter');
         }
 
-        if (empty($merchant_key)) {
-            throw new \Exception('Invalid ' . self::$labels[self::PARAM_MERCHANT_KEY] . ' parameter');
+        if (empty($merchantSecret)) {
+            throw new \Exception('Invalid ' . self::$labels[self::PARAM_MERCHANT_SECRET] . ' parameter');
         }
 
-        if (empty($merchant_secret)) {
-            throw new \Exception('Invalid ' . self::$labels[self::PARAM_MERCHANT_SECRET] . ' parameter');
+        if (empty($monethaApiKey)) {
+            throw new \Exception('Invalid ' . self::$labels[self::PARAM_MONETHA_API_KEY] . ' parameter');
+        }
+
+        // Validate monetha api key with backend
+        $gatewayService = new GatewayService($merchantSecret, $monethaApiKey, $testMode);
+        if (!$gatewayService->validateApiKey()) {
+            throw new \Exception('Merchant secret or Monetha Api Key is not valid!');
         }
     }
 }

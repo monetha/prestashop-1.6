@@ -41,8 +41,7 @@
 <h3>{l s='Monetha Gateway payment' mod='monethagateway'}</h3>
 <form action="{$link->getModuleLink('monethagateway', 'validation', [], true)|escape:'html'}" method="post">
 <p>
-	<img src="{$this_path_bw}bankwire.jpg" alt="{l s='Monetha Gateway' mod='monethagateway'}" width="86" height="49" style="float:left; margin: 0px 10px 5px 0px;" />
-	{l s='You have chosen to pay by Monetha Gateway.' mod='monethagateway'}
+	{l s='You have chosen to pay by Monetha.' mod='monethagateway'}
 	<br/><br />
 	{l s='Here is a short summary of your order:' mod='monethagateway'}
 </p>

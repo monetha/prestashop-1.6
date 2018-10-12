@@ -26,6 +26,6 @@
 <div class="alert alert-info">
 <img src="../modules/monethagateway/bankwire.jpg" style="float:left; margin-right:15px;" width="86" height="49">
 <p><strong>{l s="This module allows you to accept secure payments by Monetha Gateway." mod='monethagateway'}</strong></p>
-<p>{l s="If the client chooses to pay by Monetha Gateway, the order's status will change to 'Waiting for Payment.'" mod='monethagateway'}</p>
+<p>{l s="If the client chooses to pay by Monetha, the order's status will change to 'Waiting for Payment.'" mod='monethagateway'}</p>
 <p>{l s="That said, you must manually confirm the order upon receiving the Monetha Gateway." mod='monethagateway'}</p>
 </div>

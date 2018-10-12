@@ -11,7 +11,7 @@ $_MODULE['<{bankwire}prestashop>bankwire_a02758d758e8bec77a33d7f392eb3f8a'] = 'N
 $_MODULE['<{bankwire}prestashop>bankwire_bfa43217dfe8261ee7cb040339085677'] = 'Account details are required.';
 $_MODULE['<{bankwire}prestashop>bankwire_ccab155f173ac76f79eb192703f86b18'] = 'Account owner is required.';
 $_MODULE['<{bankwire}prestashop>bankwire_c888438d14855d7d96a2724ee9c306bd'] = 'Settings updated';
-$_MODULE['<{bankwire}prestashop>bankwire_4ffaad55a1d22c453e7c9bad67b0598f'] = 'Pay by Monetha Gateway';
+$_MODULE['<{bankwire}prestashop>bankwire_4ffaad55a1d22c453e7c9bad67b0598f'] = 'Pay by Monetha';
 $_MODULE['<{bankwire}prestashop>bankwire_5dd532f0a63d89c5af0243b74732f63c'] = 'Contact details';
 $_MODULE['<{bankwire}prestashop>bankwire_857216dd1b374de9bf54068fcd78a8f3'] = 'Account owner';
 $_MODULE['<{bankwire}prestashop>bankwire_3ec365dd533ddb7ef3d1c111186ce872'] = 'Details';
@@ -25,7 +25,7 @@ $_MODULE['<{bankwire}prestashop>payment_execution_511e8b930b4d3d6002984c0373eb6d
 $_MODULE['<{bankwire}prestashop>payment_execution_f1d3b424cd68795ecaa552883759aceb'] = 'Order summary';
 $_MODULE['<{bankwire}prestashop>payment_execution_879f6b8877752685a966564d072f498f'] = 'Your shopping cart is empty.';
 $_MODULE['<{bankwire}prestashop>payment_execution_05adcee99142c1a60fb38bb1330bbbc1'] = 'Monetha Gateway';
-$_MODULE['<{bankwire}prestashop>payment_execution_afda466128ee0594745d9f8152699b74'] = 'You have chosen to pay by Monetha Gateway.';
+$_MODULE['<{bankwire}prestashop>payment_execution_afda466128ee0594745d9f8152699b74'] = 'You have chosen to pay by Monetha.';
 $_MODULE['<{bankwire}prestashop>payment_execution_c884ed19483d45970c5bf23a681e2dd2'] = 'Here is a short summary of your order:';
 $_MODULE['<{bankwire}prestashop>payment_execution_e2867a925cba382f1436d1834bb52a1c'] = 'The total amount of your order is';
 $_MODULE['<{bankwire}prestashop>payment_execution_1f87346a16cf80c372065de3c54c86d9'] = '(tax incl.)';
@@ -37,7 +37,7 @@ $_MODULE['<{bankwire}prestashop>payment_execution_edd87c9059d88fea45c0bd6384ce92
 $_MODULE['<{bankwire}prestashop>payment_execution_46b9e3665f187c739c55983f757ccda0'] = 'I confirm my order';
 $_MODULE['<{bankwire}prestashop>payment_execution_569fd05bdafa1712c4f6be5b153b8418'] = 'Other payment methods';
 $_MODULE['<{bankwire}prestashop>infos_c1be305030739396775edaca9813f77d'] = 'This module allows you to accept secure payments by Monetha Gateway.';
-$_MODULE['<{bankwire}prestashop>infos_60742d06006fde3043c77e6549d71a99'] = 'If the client chooses to pay by Monetha Gateway, the order\'s status will change to \'Waiting for Payment.\'';
+$_MODULE['<{bankwire}prestashop>infos_60742d06006fde3043c77e6549d71a99'] = 'If the client chooses to pay by Monetha, the order\'s status will change to \'Waiting for Payment.\'';
 $_MODULE['<{bankwire}prestashop>infos_5fb4bbf993c23848433caf58e6b2816d'] = 'That said, you must manually confirm the order upon receiving the Monetha Gateway.';
 $_MODULE['<{bankwire}prestashop>payment_return_88526efe38fd18179a127024aba8c1d7'] = 'Your order on %s is complete.';
 $_MODULE['<{bankwire}prestashop>payment_return_1f8cdc30326f1f930b0c87b25fdac965'] = 'Please send us a Monetha Gateway with';
@@ -52,7 +52,7 @@ $_MODULE['<{bankwire}prestashop>payment_return_b9a1cae09e5754424e33764777cfcaa0'
 $_MODULE['<{bankwire}prestashop>payment_return_ca7e41a658753c87973936d7ce2429a8'] = 'If you have questions, comments or concerns, please contact our';
 $_MODULE['<{bankwire}prestashop>payment_return_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'expert customer support team';
 $_MODULE['<{bankwire}prestashop>payment_return_d15feee53d81ea16269e54d4784fa123'] = 'We noticed a problem with your order. If you think this is an error, feel free to contact our';
-$_MODULE['<{bankwire}prestashop>payment_5e1695822fc5af98f6b749ea3cbc9b4c'] = 'Pay by Monetha Gateway';
+$_MODULE['<{bankwire}prestashop>payment_5e1695822fc5af98f6b749ea3cbc9b4c'] = 'Pay by Monetha';
 $_MODULE['<{bankwire}prestashop>payment_4e1fb9f4b46556d64db55d50629ee301'] = '(order processing will be longer)';
 $_MODULE['<{bankwire}prestashop>payment_return_decce112a9e64363c997b04aa71b7cb8'] = 'customer service department.';
 
