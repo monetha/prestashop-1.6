@@ -2,17 +2,11 @@
 
 namespace Monetha\Services;
 
-require_once(__DIR__ . '/HttpService.php');
-require_once(__DIR__ . './../Consts/ApiType.php');
-require_once(__DIR__ . './../Consts/EventType.php');
-require_once(__DIR__ . './../Consts/Resource.php');
-require_once(__DIR__ . './../Helpers/JWT.php');
-
+use Monetha\Interceptor;
 use Monetha\Consts\ApiType;
 use Monetha\Consts\Resource;
 use Monetha\Consts\EventType;
 use Monetha\Helpers\JWT;
-use Monetha\Services\HttpService;
 
 class GatewayService
 {
@@ -45,7 +39,10 @@ class GatewayService
                 'amount_fiat' => $price,
             ];
             $itemsPrice += $price * $quantity;
-            $items[] = $li;
+            if($price > 0)
+            {
+                $items[] = $li;
+            }
         }
 
         $itemsPrice = round($itemsPrice, 2);
@@ -58,7 +55,11 @@ class GatewayService
             'quantity' => 1,
             'amount_fiat' => round($grandTotal - $itemsPrice, 2),
         ];
-        $items[] = $shipping;
+        
+        if($shipping['amount_fiat'] > 0)
+        {
+            $items[] = $shipping;
+        }
 
         $deal = array(
             'deal' => array(
@@ -68,9 +69,8 @@ class GatewayService
             ),
             'return_url' => $order->getBaseUrl(),
             'callback_url' => $order->getBaseUrl() . '/modules/monethagateway/webservices/actions.php',
-            'external_order_id' => $orderId . " ",
-        );
-
+            'external_order_id' => (string) $orderId,
+        );        
         return $deal;
     }
 
@@ -86,7 +86,11 @@ class GatewayService
         $apiUrl = $apiUrl . 'v1/merchants/' . $merchantId .'/secret';
 
         $response = HttpService::callApi($apiUrl, 'GET', null, ["Authorization: Bearer " . $this->mthApiKey]);
-        return ($response && $response->integration_secret && $response->integration_secret == $this->merchantSecret);
+        if(isset($response->integration_secret))
+        {
+            return $response->integration_secret == $this->merchantSecret;
+        }
+        return false;
     }
 
     public function configurationIsValid()
@@ -110,13 +114,25 @@ class GatewayService
             return null;
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
-        $payload = JWT::jsonDecode(JWT::urlsafeB64Decode($bodyb64));
+        if($this->isJson(JWT::urlsafeB64Decode($bodyb64)))
+        {
+            $payload = JWT::jsonDecode(JWT::urlsafeB64Decode($bodyb64));
+        }
+        else
+        {
+            return null;
+        }
 
         if (isset($payload->mid)) {
             return $payload->mid;
         }
 
         return null;
+    }
+
+    public function isJson($str) {
+        $json = json_decode($str);
+        return $json && $str != $json;
     }
 
     public function getApiUrl()
@@ -136,6 +152,25 @@ class GatewayService
         $apiUrl = $apiUrl . 'v1/orders/' . $orderId .'/cancel';
         $body = ['cancel_reason'=> 'Order cancelled from shop'];
         return HttpService::callApi($apiUrl, 'POST', $body, ["Authorization: Bearer " . $this->mthApiKey]);
+    }
+
+    public function createClient($clientBody)
+    {
+        $clientId = 0;
+        if(isset($clientBody['contact_phone_number']) && $clientBody['contact_phone_number'])
+        {
+            $apiUrl = $this->getApiUrl();
+            $apiUrl = $apiUrl . 'v1/clients';
+
+            $clientResponse = HttpService::callApi($apiUrl, 'POST', $clientBody, ["Authorization: Bearer " . $this->mthApiKey]);
+            if(isset($clientResponse->client_id)) {
+                $clientId = $clientResponse->client_id;
+            } else {
+                return $clientResponse;
+            }
+        }
+
+        return $clientId;
     }
 
     public function createOffer($offerBody)
@@ -165,6 +200,9 @@ class GatewayService
                     case EventType::FINALIZED:
                         $this::finalizeOrder($order);
                         break;
+                    case EventType::MONEY_AUTHORIZED:
+                        $this::finalizeOrderByCard($order);
+                        break;
                     default:
                         throw new \Exception('Bad action type');
                         break;
@@ -186,6 +224,14 @@ class GatewayService
     }
 
     public function finalizeOrder($order)
+    {
+        $history = new \OrderHistory();
+        $history->id_order = (int)$order->id;
+        $history->changeIdOrderState(2, (int)($order->id), true);
+        $history->save();
+    }
+
+    public function finalizeOrderByCard($order)
     {
         $history = new \OrderHistory();
         $history->id_order = (int)$order->id;

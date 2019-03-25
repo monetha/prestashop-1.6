@@ -6,7 +6,10 @@
             "email": "aleksander.hitrov@betgames.tv"
         }
     ],
-    "require": {},
+    "require": {
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
     "autoload": {
         "psr-4": {"Monetha\\": "Monetha/"}
     }

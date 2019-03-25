@@ -1,12 +1,8 @@
-
 <?php
 
-require_once(__DIR__ . './../Services/GatewayService.php');
-require_once(__DIR__ . './../Consts/Resource.php');
-require_once(__DIR__ . './../Consts/EventType.php');
+require '../vendor/autoload.php';
 
 use Monetha\Services\GatewayService;
-use Monetha\Consts\Resource;
 use Monetha\Consts\EventType;
 
 $currentDirectory = str_replace(
@@ -14,8 +10,8 @@ $currentDirectory = str_replace(
     '',
     dirname($_SERVER['SCRIPT_FILENAME']) . "/"
 );
-$sep = DIRECTORY_SEPARATOR;
-require_once $currentDirectory . 'config' . $sep . 'config.inc.php';
+
+require_once $currentDirectory . 'config' . DIRECTORY_SEPARATOR . 'config.inc.php';
 require_once $currentDirectory . 'init.php';
 header('Content-type:application/json;charset=utf-8');
 

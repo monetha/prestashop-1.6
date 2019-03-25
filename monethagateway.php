@@ -50,6 +50,7 @@ class MonethaGateway extends PaymentModule
                                         '{bankwire_details}' => nl2br(Configuration::get('BANK_WIRE_DETAILS')),
                                         '{bankwire_address}' => nl2br(Configuration::get('BANK_WIRE_ADDRESS'))
                                         );
+
     }
 
     public function install()
@@ -58,7 +59,9 @@ class MonethaGateway extends PaymentModule
             !parent::install() ||
             !$this->registerHook('payment') ||
             !$this->registerHook('displayPaymentEU') ||
-            !$this->registerHook('paymentReturn')
+            !$this->registerHook('paymentReturn') ||
+            !$this->registerHook('actionOrderStatusPostUpdate') ||
+            !$this->registerHook('paymentTop')
         ) {
             return false;
         }
@@ -112,6 +115,21 @@ class MonethaGateway extends PaymentModule
             'name' => 'Awaiting Monetha payment',
             'template' => self::MODULE_NAME,
         ));
+
+
+        Db::getInstance()->execute("CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."monetha_gateway` (
+          `id` int(11) NOT NULL,
+          `order_id` int(11) NOT NULL,
+          `cart_id` int(11) NOT NULL,
+          `monetha_id` int(11) NOT NULL,
+          `payment_url` VARCHAR(512) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+        ALTER TABLE `"._DB_PREFIX_."monetha_gateway`
+          ADD PRIMARY KEY (`id`);
+
+        ALTER TABLE `"._DB_PREFIX_."monetha_gateway`
+          MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
     }
 
     private function delete_order_state()
@@ -121,6 +139,8 @@ class MonethaGateway extends PaymentModule
 
         $db->delete('order_state_lang', "id_order_state = $order_state_id", 1);
         $db->delete('order_state', "id_order_state = $order_state_id", 1);
+
+        Db::getInstance()->execute("DROP TABLE `"._DB_PREFIX_."monetha_gateway`");
     }
 
     private function copy_email_templates()
@@ -159,6 +179,15 @@ class MonethaGateway extends PaymentModule
     public function displayForm()
     {
         $output = null;
+
+        //Defining default values
+        $conf = array(
+            'enabled' => '0',
+            'testMode' => '1',
+            'merchantSecret' => '',
+            'monethaApiKey' => ''
+        );
+
         try {
             $conf = Monetha\Config::get_configuration();
         } catch (\Exception $e) {
@@ -328,6 +357,35 @@ class MonethaGateway extends PaymentModule
         return $payment_options;
     }
 
+    public function hookActionOrderStatusPostUpdate($params)
+    {
+        if ($params['newOrderStatus']->id == Configuration::get('PS_OS_CANCELED')) {
+             try {
+                 $order = new Order($params['id_order']);
+                 if ($order->module == 'monethagateway') {
+                    $data = Db::getInstance()->executeS("SELECT * FROM `"._DB_PREFIX_."monetha_gateway` WHERE order_id='".pSQL($params['id_order'])."'");
+
+                    $conf = Monetha\Config::get_configuration();
+
+                    $testMode = $conf[Monetha\Config::PARAM_TEST_MODE];
+                    $merchantSecret = $conf[Monetha\Config::PARAM_MERCHANT_SECRET];
+                    $monethaApiKey = $conf[Monetha\Config::PARAM_MONETHA_API_KEY];
+                    $gateway = new GatewayService($merchantSecret, $monethaApiKey, $testMode);
+                    $gateway->cancelExternalOrder($data[0]['monetha_id']);
+                 }
+             } catch (\Exception $ex) {
+             }
+
+             return;
+        }
+
+        /** @var Cart $cart */
+        $cart = $params['cart'];
+        $orderId = $params['id_order'];
+
+        $this->savePaymentUrl($cart, $orderId);
+    }
+
     public function hookPaymentReturn($params)
     {
         if (!$this->active) {
@@ -366,5 +424,70 @@ class MonethaGateway extends PaymentModule
             }
         }
         return false;
+    }
+
+    public function hookPaymentTop()
+    {
+        if (isset($this->context->cookie->redirect_errors) && isset($_GET['monetha_error'])){
+            $error = $this->context->cookie->redirect_errors;
+            unset($this->context->cookie->redirect_errors);
+            return "<span style='color:red;font-size:14px;'>".$error."</span>";
+        }
+    }
+
+    /**
+     * @param Cart $cart
+     * @param string $orderId
+     * @throws PrestaShopDatabaseException
+     */
+    private function savePaymentUrl($cart, $orderId) {
+        $conf = Monetha\Config::get_configuration();
+
+        $testMode = $conf[Monetha\Config::PARAM_TEST_MODE];
+        $merchantSecret = $conf[Monetha\Config::PARAM_MERCHANT_SECRET];
+        $monethaApiKey = $conf[Monetha\Config::PARAM_MONETHA_API_KEY];
+        $gatewayService = new \Monetha\Services\GatewayService($merchantSecret, $monethaApiKey, $testMode);
+
+        $orderAdapter = new Monetha\OrderAdapter($cart, $this->context->currency->iso_code, _PS_BASE_URL_);
+
+        $authorizationRequest = new Monetha\AuthorizationRequest();
+        $offerBody = $gatewayService->prepareOfferBody($orderAdapter, $orderId);
+        $customerDetails = $this->context->customer;
+
+        $address = new Address($this->context->cart->id_address_delivery);
+
+        $iso_code = Country::getIsoById($address->id_country);
+
+        $phoneNumber = $address->phone_mobile ? $address->phone_mobile : $address->phone;
+
+        $clientBody = array(
+            'contact_name' => $address->firstname.' '.$address->lastname,
+            'contact_email' => $customerDetails->email,
+            'contact_phone_number' => (string) preg_replace('/\D/', '', $phoneNumber),
+            'country_code_iso' => $iso_code,
+            'address' => $address->address1,
+            'city' => $address->city,
+            'zipcode' => $address->postcode
+        );
+
+        $paymentData = $authorizationRequest->getPaymentUrl($offerBody, $clientBody);
+
+        if(isset($paymentData['error'])) {
+            $this->context->cookie->__set('redirect_errors', Tools::displayError($paymentData['message']));
+            Tools::redirect('index.php?controller=order&step=3&monetha_error=1');
+        }
+
+        $paymentUrl = $paymentData['payment_url'];
+        $monethaId = $paymentData['monetha_id'];
+
+        $result = Db::getInstance()->insert("monetha_gateway", array(
+            'order_id'=> $orderId,
+            'monetha_id' => $monethaId,
+            'payment_url' => $paymentUrl,
+            'cart_id' => $cart->id,
+        ));
+
+        error_log($result);
+//        Tools::redirectLink($paymentUrl);
     }
 }

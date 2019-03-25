@@ -2,8 +2,6 @@
 
 namespace Monetha;
 
-require_once(__DIR__ . './../Services/GatewayService.php');
-
 use Monetha\Services\GatewayService;
 
 class Config
