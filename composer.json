@@ -14,11 +14,11 @@
     },
     "repositories": [
         {
-            "url": "git@gitlab.com:monetha/prestashop-plugin-base.git",
+            "url": "https://github.com/monetha/prestashop-plugin-base.git",
             "type": "vcs"
         },
         {
-            "url": "https://gitlab.com/monetha/payment-plugin-php-sdk.git",
+            "url": "https://github.com/monetha/payment-plugin-php-sdk.git",
             "type": "vcs"
         }
     ]
