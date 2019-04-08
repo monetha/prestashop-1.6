@@ -2,8 +2,9 @@
 
 require '../vendor/autoload.php';
 
-use Monetha\Services\GatewayService;
-use Monetha\Consts\EventType;
+use Monetha\Response\Exception\ValidationException;
+use Monetha\PS16\Adapter\WebHookAdapter;
+use Monetha\PS16\Adapter\ConfigAdapter;
 
 $currentDirectory = str_replace(
     'modules/monethagateway/webservices/',
@@ -15,56 +16,49 @@ require_once $currentDirectory . 'config' . DIRECTORY_SEPARATOR . 'config.inc.ph
 require_once $currentDirectory . 'init.php';
 header('Content-type:application/json;charset=utf-8');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    try {
-        // Get body from post and signature from headers
-        $body = file_get_contents('php://input');
-        $signature = $_SERVER['HTTP_MTH_SIGNATURE']; #getallheaders()['mth-signature'];
-        if (json_decode($body)->event == EventType::PING) {
-            handleResponse(200, 'Shop healthy');
-        }
-
-        $conf = json_decode(\Configuration::get('monethagateway'));
-
-        // Validate plugin configuration
-        $gatewayService = new GatewayService($conf->merchantSecret, $conf->monethaApiKey, $conf->testMode);
-        if (!$gatewayService->configurationIsValid()) {
-            handleResponse(404, 'Plugin configuration not valid');
-        }
-
-        // Validate body with merchant key
-        if ($gatewayService->validateSignature($signature, $body)) {
-
-            // Check if order exist
-            $order = null;
-            $orderId = Order::getOrderByCartId((int)(json_decode($body)->payload->external_order_id));
-
-            if (!empty($orderId)) {
-                $order = new Order($orderId);
-            }
-
-            if (empty($order->id_cart)) {
-                handleResponse('401', 'Order not found');
-            }
-
-            // Process finalized or cancelled action
-            $gatewayService->processAction($order, json_decode($body));
-        } else {
-            handleResponse(401, 'Bad signature');
-        }
-    } catch (\Exception $ex) {
-        handleResponse(400, $ex->getMessage());
+try {
+    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+        throw new ValidationException('Request method not supported', 405);
     }
-} else {
-    handleResponse(405, 'Request not supported');
+
+    // Get body from post and signature from headers
+    $bodyString = file_get_contents('php://input');
+    $body = json_decode($bodyString);
+
+    // Check if order exist
+    $order = null;
+
+    // Monetha external_order_id is actually cart id due to Prestashop itself
+    $orderId = Order::getOrderByCartId((int)($body->payload->external_order_id));
+
+    if (!empty($orderId)) {
+        $order = new Order($orderId);
+    }
+
+    if (!$order || empty($order->id_cart)) {
+        throw new ValidationException('Order not found', 404);
+    }
+
+    $webhookAdapter = new WebHookAdapter($order);
+
+    $configAdapter = new ConfigAdapter(true);
+    $signature = !empty($_SERVER['HTTP_MTH_SIGNATURE']) ? $_SERVER['HTTP_MTH_SIGNATURE'] : ''; #getallheaders()['mth-signature'];
+
+    $result = $webhookAdapter->processWebHook($configAdapter, $bodyString, $signature);
+
+    if (!$result) {
+        throw new ValidationException('Bad request', 400);
+    }
+
+} catch (\Exception $e) {
+    http_response_code($e->getCode());
+
+    echo json_encode([
+        'status' => $e->getCode(),
+        'message' => $e->getMessage(),
+    ]);
+
+    return;
 }
 
-function handleResponse($status, $message)
-{
-    http_response_code($status);
-    echo json_encode([
-        'status' => $status,
-        'message' => $message
-    ]);
-    exit;
-}
+echo json_encode($result);

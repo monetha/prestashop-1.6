@@ -1,5 +1,5 @@
 {
-    "name": "aleksander.hitrov/monethagateway",
+    "name": "monetha/prestashop-1.6",
     "authors": [
         {
             "name": "Alexander Hitrov",
@@ -8,9 +8,18 @@
     ],
     "require": {
         "ext-curl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "monetha/prestashop-plugin-base": "dev-master",
+        "monetha/payment-plugin-php-sdk": "dev-master"
     },
-    "autoload": {
-        "psr-4": {"Monetha\\": "Monetha/"}
-    }
+    "repositories": [
+        {
+            "url": "git@gitlab.com:monetha/prestashop-plugin-base.git",
+            "type": "vcs"
+        },
+        {
+            "url": "https://gitlab.com/monetha/payment-plugin-php-sdk.git",
+            "type": "vcs"
+        }
+    ]
 }
