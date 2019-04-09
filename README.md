@@ -22,6 +22,8 @@ When test mode is switched on all payment transactions will be made in Ropsten t
 
 Sometimes Smarty templates recompilation could be needed, navigate Advanced Parameters - Performance and click `Clear Cache`.
 
+If you want to create a module from the contents of this repository, perform the actions below:
+
 1. `composer install`
 2. create a directory named `monethagateway`
 3. copy all the contents from this directory (except `releases` but including `vendor`) inside it
