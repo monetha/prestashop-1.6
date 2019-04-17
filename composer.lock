@@ -1,0 +1,92 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "3fa100ad73639b94449cceaaa23213fe",
+    "packages": [
+        {
+            "name": "monetha/payment-plugin-php-sdk",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/monetha/payment-plugin-php-sdk.git",
+                "reference": "ea0cb36078ebe79c21e850b81b497ba1ebf685da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/monetha/payment-plugin-php-sdk/zipball/ea0cb36078ebe79c21e850b81b497ba1ebf685da",
+                "reference": "ea0cb36078ebe79c21e850b81b497ba1ebf685da",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Monetha\\": "src/Monetha/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Alexander Hitrov",
+                    "email": "alexander.hitrov@monetha.io"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/monetha/payment-plugin-php-sdk/tree/master",
+                "issues": "https://github.com/monetha/payment-plugin-php-sdk/issues"
+            },
+            "time": "2019-04-17T13:14:07+00:00"
+        },
+        {
+            "name": "monetha/prestashop-plugin-base",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/monetha/prestashop-plugin-base.git",
+                "reference": "0c9692bc08392e1b03fb1accf38cbdbd9f34d146"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/monetha/prestashop-plugin-base/zipball/0c9692bc08392e1b03fb1accf38cbdbd9f34d146",
+                "reference": "0c9692bc08392e1b03fb1accf38cbdbd9f34d146",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Monetha\\": "src/Monetha/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Alexander Hitrov",
+                    "email": "alexander.hitrov@monetha.io"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/monetha/prestashop-plugin-base/tree/master",
+                "issues": "https://github.com/monetha/prestashop-plugin-base/issues"
+            },
+            "time": "2019-04-08T14:51:25+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "monetha/prestashop-plugin-base": 20,
+        "monetha/payment-plugin-php-sdk": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "platform-dev": []
+}
