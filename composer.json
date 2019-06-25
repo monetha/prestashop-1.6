@@ -1,5 +1,6 @@
 {
     "name": "monetha/prestashop-1.6",
+    "version": "3.0.0",
     "authors": [
         {
             "name": "Alexander Hitrov",
@@ -9,8 +10,8 @@
     "require": {
         "ext-curl": "*",
         "ext-json": "*",
-        "monetha/prestashop-plugin-base": "1.1.0",
-        "monetha/payment-plugin-php-sdk": "1.1.0"
+        "monetha/prestashop-plugin-base": "dev-implementing-return-url",
+        "monetha/payment-plugin-php-sdk": "dev-process-shipping-discounts-on-shop-side"
     },
     "repositories": [
         {
