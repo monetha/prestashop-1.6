@@ -9,8 +9,8 @@
     "require": {
         "ext-curl": "*",
         "ext-json": "*",
-        "monetha/prestashop-plugin-base": "1.0.2",
-        "monetha/payment-plugin-php-sdk": "1.0.7"
+        "monetha/prestashop-plugin-base": "1.1.0",
+        "monetha/payment-plugin-php-sdk": "1.1.0"
     },
     "repositories": [
         {
