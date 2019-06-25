@@ -113,6 +113,6 @@ class MonethaGatewayValidationModuleFrontController extends ModuleFrontControlle
             $discountAmount += $rule['value_real'];
         }
 
-        return $discountAmount;
+        return round($discountAmount, 2);
     }
 }
