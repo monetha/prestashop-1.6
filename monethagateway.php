@@ -417,12 +417,9 @@ class MonethaGateway extends PaymentModule
         }
 
         $state = $params['objOrder']->getCurrentState();
-        if (in_array($state, array(Configuration::get('PS_OS_BANKWIRE'), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')))) {
+        if (in_array($state, array(Configuration::get(Monetha\Config::ORDER_STATUS), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')))) {
             $this->smarty->assign(array(
                 'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
-                'bankwireDetails' => Tools::nl2br($this->details),
-                'bankwireAddress' => Tools::nl2br($this->address),
-                'bankwireOwner' => $this->owner,
                 'status' => 'ok',
                 'id_order' => $params['objOrder']->id
             ));
