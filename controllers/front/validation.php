@@ -42,7 +42,9 @@ class MonethaGatewayValidationModuleFrontController extends ModuleFrontControlle
         }
 
         try {
-            $orderAdapter = new OrderAdapter($cart, $this->context->currency->iso_code, _PS_BASE_URL_);
+            $discountAmount = $this->getDiscountAmount($cart);
+            $returnUri = 'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key;
+            $orderAdapter = new OrderAdapter($cart, $this->context->currency->iso_code, _PS_BASE_URL_, $discountAmount, $returnUri);
 
             $address = new Address($this->context->cart->id_address_delivery);
             $clientAdapter = new ClientAdapter($address, $this->context->customer);
@@ -96,5 +98,21 @@ class MonethaGatewayValidationModuleFrontController extends ModuleFrontControlle
         }
 
         Tools::redirectLink($paymentUrl);
+    }
+
+    /**
+     * @param \Cart $cart
+     *
+     * @return float
+     */
+    private function getDiscountAmount($cart) {
+        $discountAmount = 0;
+
+        $cartRules = $cart->getCartRules();
+        foreach ($cartRules as $rule) {
+            $discountAmount += $rule['value_real'];
+        }
+
+        return round($discountAmount, 2);
     }
 }

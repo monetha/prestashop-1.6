@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f160ed1a55a3085fd7336a28c219d05e",
+    "content-hash": "959dd9cd5d6d4729bccf860207075ed0",
     "packages": [
         {
             "name": "monetha/payment-plugin-php-sdk",
-            "version": "1.0.7",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/monetha/payment-plugin-php-sdk.git",
-                "reference": "acd1feb9ba7377146ec479e4b0afcd8763243c87"
+                "reference": "d9d7b6ca2280adb0e5434f3f64036ee8121c7725"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/monetha/payment-plugin-php-sdk/zipball/acd1feb9ba7377146ec479e4b0afcd8763243c87",
-                "reference": "acd1feb9ba7377146ec479e4b0afcd8763243c87",
+                "url": "https://api.github.com/repos/monetha/payment-plugin-php-sdk/zipball/d9d7b6ca2280adb0e5434f3f64036ee8121c7725",
+                "reference": "d9d7b6ca2280adb0e5434f3f64036ee8121c7725",
                 "shasum": ""
             },
             "require": {
@@ -37,23 +37,23 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/monetha/payment-plugin-php-sdk/tree/1.0.7",
+                "source": "https://github.com/monetha/payment-plugin-php-sdk/tree/1.2.0",
                 "issues": "https://github.com/monetha/payment-plugin-php-sdk/issues"
             },
-            "time": "2019-04-26T10:37:57+00:00"
+            "time": "2019-06-26T12:41:16+00:00"
         },
         {
             "name": "monetha/prestashop-plugin-base",
-            "version": "1.0.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/monetha/prestashop-plugin-base.git",
-                "reference": "76eba56b15d4b73f052860ff2c0ab10d50759eec"
+                "reference": "b37db653887b6b3c345ce86708d8727d3ff6bfd7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/monetha/prestashop-plugin-base/zipball/76eba56b15d4b73f052860ff2c0ab10d50759eec",
-                "reference": "76eba56b15d4b73f052860ff2c0ab10d50759eec",
+                "url": "https://api.github.com/repos/monetha/prestashop-plugin-base/zipball/b37db653887b6b3c345ce86708d8727d3ff6bfd7",
+                "reference": "b37db653887b6b3c345ce86708d8727d3ff6bfd7",
                 "shasum": ""
             },
             "type": "library",
@@ -69,10 +69,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/monetha/prestashop-plugin-base/tree/1.0.2",
+                "source": "https://github.com/monetha/prestashop-plugin-base/tree/1.2.0",
                 "issues": "https://github.com/monetha/prestashop-plugin-base/issues"
             },
-            "time": "2019-06-21T13:04:37+00:00"
+            "time": "2019-06-26T12:36:00+00:00"
         }
     ],
     "packages-dev": [],
