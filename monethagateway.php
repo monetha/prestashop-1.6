@@ -417,18 +417,35 @@ class MonethaGateway extends PaymentModule
         }
 
         $state = $params['objOrder']->getCurrentState();
-        if (in_array($state, array(Configuration::get(Monetha\Config::ORDER_STATUS), Configuration::get('PS_OS_OUTOFSTOCK'), Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')))) {
-            $this->smarty->assign(array(
-                'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
-                'status' => 'ok',
-                'id_order' => $params['objOrder']->id
-            ));
+
+        $isAwaitingPayment = in_array($state, array(
+            Configuration::get(Monetha\Config::ORDER_STATUS),
+            Configuration::get('PS_OS_OUTOFSTOCK'),
+            Configuration::get('PS_OS_OUTOFSTOCK_UNPAID')
+        ));
+
+        $isPaid = $state == Configuration::get('PS_OS_PAYMENT');
+
+        if ($isAwaitingPayment || $isPaid) {
+            $this->smarty->assign('id_order', $params['objOrder']->id);
             if (isset($params['objOrder']->reference) && !empty($params['objOrder']->reference)) {
                 $this->smarty->assign('reference', $params['objOrder']->reference);
             }
+        }
+
+        if ($isAwaitingPayment) {
+            $this->smarty->assign(array(
+                'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
+                'status' => 'ok',
+            ));
+        } elseif ($isPaid) {
+            $this->smarty->assign(array(
+                'status' => 'paid',
+            ));
         } else {
             $this->smarty->assign('status', 'failed');
         }
+
         return $this->display(__FILE__, 'payment_return.tpl');
     }
 
