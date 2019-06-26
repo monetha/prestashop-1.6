@@ -373,16 +373,13 @@ class MonethaGateway extends PaymentModule
                     return;
                 }
 
-                $query = "SELECT * FROM `" . _DB_PREFIX_ . "monetha_gateway` WHERE order_id='" . pSQL($params['id_order']) . "' LIMIT 1";
-                $data = Db::getInstance()->executeS($query);
-                if (!$data) {
-                    error_log('Monetha gateway order id = ' . $params['id_order'] . ' not found.');
+                $row = $this->getMonethaOrderByOrderId($params['id_order']);
+                if (!$row) {
+                    return;
                 }
 
                 $configAdapter = new \Monetha\PS16\Adapter\ConfigAdapter(true);
                 $gateway = new \Monetha\Services\GatewayService($configAdapter);
-
-                $row = reset($data);
 
                 $gateway->cancelExternalOrder($row['monetha_id']);
             } catch (\Monetha\Response\Exception\ApiException $e) {
@@ -438,6 +435,11 @@ class MonethaGateway extends PaymentModule
                 'total_to_pay' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
                 'status' => 'ok',
             ));
+
+            $row = $this->getMonethaOrderByOrderId($params['objOrder']->id);
+            if ($row) {
+                $this->smarty->assign('payment_url', $row['payment_url']);
+            }
         } elseif ($isPaid) {
             $this->smarty->assign(array(
                 'status' => 'paid',
@@ -498,5 +500,24 @@ class MonethaGateway extends PaymentModule
         $data = Db::getInstance()->executeS($query);
 
         return $data && in_array($columnName, array_column($data, 'COLUMN_NAME'));
+    }
+
+    /**
+     * @param int $orderId
+     * @return array|null
+     * @throws PrestaShopDatabaseException
+     */
+    private function getMonethaOrderByOrderId($orderId) {
+        $query = "SELECT * FROM `" . _DB_PREFIX_ . "monetha_gateway` WHERE order_id='" . pSQL($orderId) . "' LIMIT 1";
+        $data = Db::getInstance()->executeS($query);
+        if (!$data) {
+            error_log('Monetha gateway order id = ' . $orderId . ' not found.');
+
+            return null;
+        }
+
+        $row = reset($data);
+
+        return $row;
     }
 }

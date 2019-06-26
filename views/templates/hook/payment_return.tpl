@@ -1,7 +1,10 @@
 {if $status == 'ok'}
 <p>{l s='Your order on %s is complete.' sprintf=$shop_name mod='monethagateway'}
 		<br /><br />
-		{l s='Please send us a payment with' mod='monethagateway'}
+		{l s='Please send us a payment ' mod='monethagateway'}
+		{if isset($payment_url)}
+			<strong><a href="{$payment_url}" target="_blank">{l s='here' mod='monethagateway'}</a></strong>
+		{/if}
 		<br /><br />- {l s='Amount' mod='monethagateway'} <span class="price"><strong>{$total_to_pay}</strong></span>
 		<br /><br />- {l s='Order number: #%d.' sprintf=$id_order mod='monethagateway'}
 		{if isset($reference)}
